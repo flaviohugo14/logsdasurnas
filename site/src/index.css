@@ -98,7 +98,9 @@ a { color: inherit; }
   transition: border-color .15s, color .15s;
 }
 .icone-btn:hover { border-color: var(--line-strong); color: var(--text); }
-@media (max-width: 720px) { .topo nav { display: none; } .topo .icone-btn { margin-left: auto; } }
+.topo-acoes { display: flex; gap: 8px; }
+.topo-acoes .icone-btn { text-decoration: none; }
+@media (max-width: 720px) { .topo nav { display: none; } .topo-acoes { margin-left: auto; } }
 
 /* Abertura */
 .hero { padding: 72px 0 40px; }
@@ -291,7 +293,11 @@ table.tabela { width: 100%; border-collapse: collapse; font-size: 14px; }
 .rodape { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; }
 .cab p a, .rodape a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
 .cab p a:hover, .rodape a:hover { color: var(--accent); }
-.rodape .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+.rodape .wrap { display: flex; flex-wrap: wrap; gap: 20px 24px; align-items: center; justify-content: space-between; }
+.redes { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.rodape .redes a { text-decoration: none; }
+.creditos { display: flex; flex-direction: column; gap: 4px; }
+@media (min-width: 900px) { .creditos { align-items: flex-end; text-align: right; } }
 
 .carregando { min-height: 60vh; display: grid; place-items: center; color: var(--muted); }
 

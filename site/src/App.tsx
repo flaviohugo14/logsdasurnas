@@ -1,10 +1,9 @@
 import { lazy, Suspense, useDeferredValue, useEffect, useMemo, useState } from 'react'
-import { carregarDados, normalizar, num, pct, rotuloIntervalo, titulo, UFS, type Intervalo, type Local, type Resumo } from './dados'
+import { carregarDados, gb, normalizar, num, pct, rotuloIntervalo, titulo, UFS, type Intervalo, type Local, type Resumo } from './dados'
 import { Histograma } from './components/Histograma'
 import { LinhaDoTempo } from './components/LinhaDoTempo'
 import { Municipios, PorUF } from './components/Rankings'
-
-const REPO = 'https://github.com/flaviohugo14/logsdasurnas'
+import { BotaoGitHub, REPO, Redes } from './components/Redes'
 
 // O MapLibre é a maior dependência; carrega em paralelo com os dados, sem travar a abertura.
 const Mapa = lazy(() => import('./components/Mapa').then(m => ({ default: m.Mapa })))
@@ -102,6 +101,8 @@ export default function App() {
             <a href="#estados">Estados</a>
             <a href="#metodo">Como calculamos</a>
           </nav>
+          <div className="topo-acoes">
+          <BotaoGitHub />
           <button className="icone-btn" onClick={alternar} aria-label={escuro ? 'Usar tema claro' : 'Usar tema escuro'}>
             {escuro ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="4.5" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
@@ -109,6 +110,7 @@ export default function App() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z" /></svg>
             )}
           </button>
+          </div>
         </div>
       </header>
 
@@ -119,8 +121,8 @@ export default function App() {
             <h1><em className="num"><Contador valor={t.votos_pos17} /></em> votos depois das 17h</h1>
             <p className="lead">
               A votação fecha às 17h de Brasília, mas quem já está na fila ainda pode votar.
-              Lemos o log de {num(t.urnas)} urnas, contamos os votos que entraram depois desse horário
-              e marcamos no mapa a escola onde cada um aconteceu.
+              Lemos o log de {num(t.urnas)} urnas{resumo.logs && <>, cerca de {gb(resumo.logs.bytes)} de arquivos</>}, contamos
+              os votos que entraram depois desse horário e marcamos no mapa a escola onde cada um aconteceu.
             </p>
             <div className="stats">
               <div className="stat"><b className="num"><Contador valor={t.urnas_pos17} /></b><span>urnas com ao menos um voto após 17h ({pct(t.urnas_pos17, t.urnas)})</span></div>
@@ -203,7 +205,7 @@ export default function App() {
               <div>
                 <div className="rotulo">Como calculamos</div>
                 <h2>Contamos linha por linha</h2>
-                <p>Os logs são públicos no site de resultados do TSE. O código que baixa e conta os votos está <a href={REPO}>no GitHub</a>, e você pode refazer tudo no seu computador.</p>
+                <p>Os logs são públicos no site de resultados do TSE. O código que baixa e conta os votos está <a href={REPO}>no GitHub</a>, e você pode refazer tudo no seu computador.{resumo.logs && <> Ao todo são {num(resumo.logs.arquivos)} arquivos, que ocupam cerca de {gb(resumo.logs.bytes)} em disco.</>}</p>
               </div>
               <a className="baixar" href={import.meta.env.BASE_URL + 'dados/urnas_pos17.csv'} download>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>
@@ -239,8 +241,11 @@ export default function App() {
 
       <footer className="rodape">
         <div className="wrap">
-          <span>Dados: logs das urnas e cadastro de locais de votação do TSE. Código: <a href={REPO}>flaviohugo14/logsdasurnas</a></span>
-          <span>Mapa: © OpenStreetMap, OpenFreeMap</span>
+          <Redes />
+          <div className="creditos">
+            <span>Dados: logs das urnas e cadastro de locais de votação do TSE. Código: <a href={REPO}>flaviohugo14/logsdasurnas</a></span>
+            <span>Mapa: © OpenStreetMap, OpenFreeMap</span>
+          </div>
         </div>
       </footer>
     </>

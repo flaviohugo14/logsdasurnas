@@ -10,7 +10,7 @@ Tudo aqui sai de dados públicos do TSE. Se você seguir os passos abaixo, deve 
 
 - Python 3.10 ou mais novo. Os scripts usam só a biblioteca padrão, então não tem `pip install`.
 - Node.js 22 ou mais novo, só para rodar o site.
-- Uns 80 GB livres em disco para os logs, mais 1 GB para o cadastro de locais.
+- Uns 75 GB livres em disco para os logs (no 2º turno de 2026 foram 73,9 GB em 434.915 arquivos), mais 1 GB para o cadastro de locais.
 - Paciência: o download leva algumas horas. No meu caso ficou em torno de 17 GB por hora.
 
 ## Passo a passo
@@ -39,7 +39,7 @@ unzip -o dados_tse/locais/locais2026.zip eleitorado_local_votacao_2026_BRASIL.cs
 python3 baixar_logs_urnas.py
 ```
 
-O script lê a lista de seções de cada estado no site de resultados do TSE e baixa o `-log.jez` de cada urna para `logs_urnas/{uf}/{município}/{zona}/{seção}/`. São cerca de 430 mil arquivos.
+O script lê a lista de seções de cada estado no site de resultados do TSE e baixa o `-log.jez` de cada urna para `logs_urnas/{uf}/{município}/{zona}/{seção}/`. São cerca de 435 mil arquivos.
 
 Algumas opções úteis:
 

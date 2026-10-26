@@ -99,7 +99,7 @@ def gravar_site(pasta, dados, resumo, faixas, municipios, ultimo_voto, linhas_po
     hist = [sum(f[i] for f in faixas.values()) for i in range(BALDES + 1)]
     with open(pasta / "resumo.json", "w", encoding="utf-8") as f:
         json.dump({"data": dados["data"], "turno": dados["turno"], "gerado_em": dados["gerado_em"],
-                   "total": total, "ufs": ufs, "exterior": resumo.get("ZZ"),
+                   "logs": dados["logs"], "total": total, "ufs": ufs, "exterior": resumo.get("ZZ"),
                    "histograma": hist, "histograma_uf": faixas,
                    "ultimo_voto": dict(zip(("hora", "uf", "municipio", "local", "secao"),
                                            (hhmmss(ultimo_voto[0]), *ultimo_voto[1:]))) if ultimo_voto else None,
@@ -131,6 +131,8 @@ def main():
 
     arquivos = sorted(Path(args.logs).glob("*/*/*/*/*-log.jez"))
     print(f"{len(arquivos)} logs encontrados", flush=True)
+    # Espaço em disco dos logs lidos, contado como o `du` (e o observar_logs.py): blocos alocados.
+    tamanho = sum(getattr(st, "st_blocks", 0) * 512 or st.st_size for st in (a.stat() for a in arquivos))
     data = args.data.encode()
     with Pool(args.processos) as pool:
         urnas = [u for u in pool.imap_unordered(ler_log, ((a, data) for a in arquivos), chunksize=64)]
@@ -226,6 +228,7 @@ def main():
     # O mapa só desenha locais com ao menos um voto após 17h; o resumo cobre todas as urnas.
     dados = {"data": args.data, "turno": args.turno,
              "gerado_em": datetime.now().strftime("%d/%m/%Y %H:%M"),
+             "logs": {"arquivos": len(arquivos), "bytes": tamanho},
              "resumo": resumo, "pontos": [p for p in pontos.values() if p["votos_pos17"]]}
     with open(saida / "mapa_dados.json", "w", encoding="utf-8") as f:
         json.dump(dados, f, ensure_ascii=False, separators=(",", ":"))

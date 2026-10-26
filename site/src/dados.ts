@@ -6,6 +6,8 @@ export type Resumo = {
   data: string
   turno: string
   gerado_em: string
+  /** logs lidos na análise; bytes em disco, como o `du` */
+  logs?: { arquivos: number; bytes: number }
   total: Contagem
   ufs: Record<string, Contagem>
   exterior: Contagem | null
@@ -92,3 +94,6 @@ const MINUSCULAS = new Set(['de', 'da', 'do', 'das', 'dos', 'e'])
 /** "SÃO GABRIEL DA CACHOEIRA" -> "São Gabriel da Cachoeira" */
 export const titulo = (s: string) =>
   s.toLowerCase().split(' ').map((p, i) => (i && MINUSCULAS.has(p) ? p : p.charAt(0).toUpperCase() + p.slice(1))).join(' ')
+
+/** Bytes em GB com uma casa, no formato brasileiro (73,9 GB). */
+export const gb = (bytes: number) => `${(bytes / 1024 ** 3).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} GB`
