@@ -10,7 +10,7 @@ Tudo aqui sai de dados públicos do TSE. Se você seguir os passos abaixo, deve 
 
 - Python 3.10 ou mais novo. Os scripts usam só a biblioteca padrão, então não tem `pip install`.
 - Node.js 22 ou mais novo, só para rodar o site.
-- Uns 75 GB livres em disco para os logs (no 2º turno de 2026 foram 73,9 GB em 434.915 arquivos), mais 1 GB para o cadastro de locais.
+- Uns 90 GB livres em disco para os logs (no 2º turno de 2026 foram 85,1 GB em 499.176 arquivos), mais 1 GB para o cadastro de locais.
 - Paciência: o download leva algumas horas. No meu caso ficou em torno de 17 GB por hora.
 
 ## Passo a passo
@@ -39,7 +39,7 @@ unzip -o dados_tse/locais/locais2026.zip eleitorado_local_votacao_2026_BRASIL.cs
 python3 baixar_logs_urnas.py
 ```
 
-O script lê a lista de seções de cada estado no site de resultados do TSE e baixa o `-log.jez` de cada urna para `logs_urnas/{uf}/{município}/{zona}/{seção}/`. São cerca de 435 mil arquivos.
+O script lê a lista de seções de cada estado no site de resultados do TSE e baixa o `-log.jez` de cada urna para `logs_urnas/{uf}/{município}/{zona}/{seção}/`. São cerca de 499 mil arquivos.
 
 Algumas opções úteis:
 
@@ -49,6 +49,12 @@ python3 baixar_logs_urnas.py --ufs ac --limite 20   # teste rápido com 20 seç�
 python3 baixar_logs_urnas.py --workers 8            # menos conexões simultâneas (o padrão é 16)
 python3 baixar_logs_urnas.py --tipos log bu rdv     # baixa também o boletim de urna e o RDV
 ```
+
+O TSE às vezes recusa requisições quando chegam muitas ao mesmo tempo. O script tenta 5 vezes cada arquivo. Se mesmo assim alguma seção falhar, ele avisa no fim ("N seções falharam") e sai com erro. Rode o mesmo comando de novo até aparecer "Tudo baixado". As seções que já estão no disco são puladas sem nova consulta ao TSE, então a segunda rodada é rápida.
+
+Para conferir se veio tudo: o 2º turno de 2026 teve 499.248 seções com urna, segundo o TSE. São 517.179 seções no cadastro, mas 17.931 são agregadas, ou seja, votam na urna de outra seção, e o log delas fica no da seção principal.
+
+Cada seção pode ter mais de um conjunto de arquivos (um "hash") se a urna reenviou os dados. O script baixa o marcado como "Totalizado". Cerca de 16 mil seções só têm um hash marcado como "Recebido", mesmo com o resultado 100% totalizado, e nesse caso o script baixa esse. Uma seção do RJ não tem log publicado, e as seções do exterior que votaram em cédula têm só o log do sistema de apuração (`logsa`), que o script não lê.
 
 Pode interromper com Ctrl+C quando quiser. Na próxima vez ele pula o que já baixou e continua. Cada arquivo é gravado primeiro como `.part` e só ganha o nome final quando termina, então um download pela metade não conta como completo.
 

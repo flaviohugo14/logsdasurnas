@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Carrossel Instagram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0d; --surface: #1a1918; --line: #2c2a28; --text: #fafaf9; --text-2: #c9c5c0; --muted: #8f8a84;
+    --accent: #fb7a35; --accent-2: #fdba8c;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #333; font-family: Geist, system-ui, sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
+  .slide {
+    width: 1080px; height: 1350px; background: var(--bg); position: relative; overflow: hidden;
+    padding: 96px 88px 120px; display: flex; flex-direction: column; margin: 0 auto 40px;
+  }
+  .slide::before { /* brilho laranja discreto no canto, como no site */
+    content: ""; position: absolute; width: 900px; height: 900px; right: -420px; top: -460px;
+    background: radial-gradient(closest-side, rgba(251,122,53,.16), transparent); pointer-events: none;
+  }
+  .rot { font-family: "Geist Mono", monospace; font-size: 26px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 36px; }
+  h1 { font-size: 112px; line-height: .98; letter-spacing: -.045em; font-weight: 600; }
+  h2 { font-size: 76px; line-height: 1.04; letter-spacing: -.035em; font-weight: 600; }
+  p { font-size: 40px; line-height: 1.35; color: var(--text-2); letter-spacing: -.01em; }
+  p + p { margin-top: 28px; }
+  b, strong { color: var(--text); font-weight: 600; }
+  em { font-style: normal; color: var(--accent); }
+  .num { font-variant-numeric: tabular-nums; }
+  .rodape {
+    position: absolute; left: 88px; right: 88px; bottom: 56px; display: flex; justify-content: space-between; align-items: center;
+    font-family: "Geist Mono", monospace; font-size: 24px; color: var(--muted);
+  }
+  .pontos { display: flex; gap: 10px; }
+  .pontos i { width: 10px; height: 10px; border-radius: 5px; background: var(--line); }
+  .pontos i.on { background: var(--accent); width: 30px; }
+  .meio { margin-top: auto; margin-bottom: auto; }
+  .cartao { background: var(--surface); border: 1px solid var(--line); border-radius: 28px; padding: 44px 48px; }
+
+  /* 1 */
+  .capa h1 .gb { display: block; font-size: 300px; line-height: .9; color: var(--accent); letter-spacing: -.06em; margin: 8px 0 18px -10px; }
+  .arraste { display: inline-flex; align-items: center; gap: 14px; font-size: 32px; color: var(--text); margin-top: 56px; border: 1px solid var(--line); border-radius: 999px; padding: 16px 28px; align-self: flex-start; }
+
+  /* 2 */
+  .log { font-family: "Geist Mono", monospace; font-size: 25px; line-height: 2.1; color: var(--muted); margin-top: 56px; }
+  .log div { white-space: nowrap; }
+  .log mark { background: none; color: var(--accent); }
+  .contas { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+  .contas div { border-top: 2px solid var(--line); padding-top: 22px; }
+  .contas b { display: block; font-size: 64px; letter-spacing: -.03em; }
+  .contas span { font-size: 28px; color: var(--muted); }
+
+  /* 4 */
+  .gigante { font-size: 236px; line-height: .9; letter-spacing: -.06em; font-weight: 600; color: var(--accent); margin: 0 0 12px -8px; }
+  .barras-tempo { display: flex; align-items: flex-end; gap: 6px; height: 220px; margin: 40px 0 14px; }
+  .barras-tempo i { flex: 1; background: var(--accent); border-radius: 6px 6px 0 0; min-height: 4px; opacity: .55; }
+  .barras-tempo i:first-child { opacity: 1; }
+  .eixo { display: flex; justify-content: space-between; font-family: "Geist Mono", monospace; font-size: 22px; color: var(--muted); }
+
+  /* 5 */
+  .comp { margin-top: 64px; }
+  .comp .item + .item { margin-top: 48px; }
+  .comp .t { font-size: 30px; color: var(--text-2); margin-bottom: 14px; }
+  .comp .v { font-size: 88px; font-weight: 600; letter-spacing: -.04em; margin-bottom: 18px; }
+  .comp .barra { height: 56px; border-radius: 0 10px 10px 0; background: var(--accent); }
+  .comp .fina { height: 56px; width: 6px; background: var(--accent-2); border-radius: 0 3px 3px 0; position: relative; }
+  .comp .fina::after { content: "← quase invisível nessa escala"; position: absolute; left: 24px; top: 8px; font-size: 28px; color: var(--muted); white-space: nowrap; }
+
+  /* 6 */
+  table { width: 100%; border-collapse: collapse; margin-top: 48px; font-size: 34px; }
+  th { font-family: "Geist Mono", monospace; font-size: 22px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 400; text-align: right; padding: 0 0 18px; }
+  th:first-child, td:first-child { text-align: left; }
+  td { padding: 17px 0; border-top: 1px solid var(--line); text-align: right; color: var(--text-2); }
+  td:first-child { color: var(--text); font-weight: 600; }
+  td.x { color: var(--accent); font-weight: 600; }
+
+  /* 7 */
+  .grande-frase { font-size: 92px; line-height: 1.02; letter-spacing: -.04em; font-weight: 600; }
+  .lista { margin-top: 56px; display: grid; gap: 26px; }
+  .lista div { display: flex; gap: 22px; font-size: 36px; line-height: 1.32; color: var(--text-2); }
+  .lista div::before { content: ""; flex: none; width: 14px; height: 14px; border-radius: 7px; background: var(--accent); margin-top: 16px; }
+
+  /* 8 */
+  .mapa { width: 100%; border-radius: 24px; border: 1px solid var(--line); display: block; margin: 44px 0 40px; }
+  .fonte { font-family: "Geist Mono", monospace; font-size: 22px; color: var(--muted); margin-top: 22px; }
+  .link { font-family: "Geist Mono", monospace; font-size: 30px; color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide capa">
+  <div class="rot">Eleições 2026 · 2º turno</div>
+  <div class="meio">
+    <h1>Baixei <span class="gb num">85 GB</span>de logs das urnas, direto do TSE.</h1>
+    <p style="margin-top:48px">E contei, um por um, os votos que entraram depois das 17h.</p>
+    <div class="arraste">Arraste para ver o que eu achei <span>→</span></div>
+  </div>
+  <div class="rodape"><span>@flaviopangracio</span><span class="pontos"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="rot">O diário da urna</div>
+  <h2>Toda urna anota o que acontece com ela, com hora e minuto.</h2>
+  <p style="margin-top:40px">Cada voto vira uma linha nesse diário. O TSE publica esses arquivos na internet, e qualquer pessoa pode baixar.</p>
+  <div class="log cartao">
+    <div>25/10/2026 16:59:41 · O voto do eleitor foi computado</div>
+    <div>25/10/2026 17:00:12 · <mark>O voto do eleitor foi computado</mark></div>
+    <div>25/10/2026 17:01:03 · <mark>O voto do eleitor foi computado</mark></div>
+  </div>
+  <div class="fonte">Exemplo simplificado de um log de urna</div>
+  <div class="contas">
+    <div><b class="num">497.895</b><span>urnas no Brasil</span></div>
+    <div><b class="num">127,9 mi</b><span>de votos registrados</span></div>
+  </div>
+  <div class="rodape"><span>@flaviopangracio</span><span class="pontos"><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="rot">O que aconteceu no domingo</div>
+  <div class="meio">
+    <h2>A votação fechava às 17h. No domingo, o STF mandou estender até as <em>19h</em> no país inteiro.</h2>
+    <p style="margin-top:48px">O TSE cumpriu a decisão. E logo veio a pergunta nas redes:</p>
+    <p class="cartao" style="margin-top:40px; font-size:52px; color:var(--text); font-weight:600; letter-spacing:-.02em">"Isso mudou o resultado da eleição?"</p>
+  </div>
+  <div class="rodape"><span>@flaviopangracio</span><span class="pontos"><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="rot">Depois das 17h</div>
+  <div class="gigante num">34.050</div>
+  <p>votos entraram nas urnas depois das 17h. É <b>1 a cada 3.750</b> votos do país.</p>
+  <div class="barras-tempo" aria-hidden="true">
+    <i style="height:100.00%"></i><i style="height:3.88%"></i><i style="height:1.20%"></i><i style="height:0.86%"></i><i style="height:0.65%"></i><i style="height:0.69%"></i><i style="height:0.63%"></i><i style="height:0.72%"></i><i style="height:0.72%"></i><i style="height:0.76%"></i><i style="height:0.69%"></i><i style="height:0.74%"></i><i style="height:0.81%"></i><i style="height:0.75%"></i><i style="height:0.80%"></i><i style="height:0.82%"></i><i style="height:0.74%"></i><i style="height:0.59%"></i><i style="height:0.62%"></i><i style="height:0.53%"></i><i style="height:0.43%"></i><i style="height:0.39%"></i><i style="height:0.28%"></i><i style="height:0.15%"></i>
+  </div>
+  <div class="eixo"><span>17h</span><span>18h</span><span>19h</span></div>
+  <p style="margin-top:44px"><b>84%</b> deles entraram nos primeiros 5 minutos. Era a fila de quem já estava na seção às 17h, e esses votos valeriam de qualquer jeito.</p>
+  <p>Das 17h05 até as 19h, o país inteiro registrou <b>5.302 votos</b>.</p>
+  <div class="rodape"><span>@flaviopangracio</span><span class="pontos"><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="rot">Presidente</div>
+  <h2>Imagine que todos esses votos foram para o mesmo candidato.</h2>
+  <div class="comp">
+    <div class="item">
+      <div class="t">Diferença entre os dois candidatos</div>
+      <div class="v num">4.430.191</div>
+      <div class="barra" style="width:100%"></div>
+    </div>
+    <div class="item">
+      <div class="t">Todos os votos depois das 17h</div>
+      <div class="v num">34.050</div>
+      <div class="fina"></div>
+    </div>
+  </div>
+  <p style="margin-top:56px">A diferença é <b>130 vezes maior</b>. Não tem conta que vire esse resultado.</p>
+  <div class="fonte">Fonte: resultado oficial do TSE e logs das urnas</div>
+  <div class="rodape"><span>@flaviopangracio</span><span class="pontos"><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i></span></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="rot">Governadores</div>
+  <h2>Nos seis estados com 2º turno para governador, também não.</h2>
+  <table style="margin-top:40px">
+    <thead><tr><th>Estado</th><th>Diferença</th><th>Votos após 17h</th></tr></thead>
+    <tbody>
+      <tr><td>Rio Grande do Norte</td><td class="num">32.625</td><td class="x num">412</td></tr>
+      <tr><td>Espírito Santo</td><td class="num">95.699</td><td class="x num">289</td></tr>
+      <tr><td>Acre</td><td class="num">133.527</td><td class="x num">157</td></tr>
+      <tr><td>Distrito Federal</td><td class="num">248.012</td><td class="x num">976</td></tr>
+      <tr><td>Tocantins</td><td class="num">253.007</td><td class="x num">221</td></tr>
+      <tr><td>Amazonas</td><td class="num">473.647</td><td class="x num">999</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:36px">Na disputa mais apertada, no RN, a diferença foi <b>79 vezes maior</b> que todos os votos depois das 17h no estado.</p>
+  <div class="fonte">Fonte: resultado oficial do TSE e logs das urnas</div>
+  <div class="rodape"><span>@flaviopangracio</span><span class="pontos"><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></span></div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="rot">Por que isso importa</div>
+  <div class="meio">
+    <div class="grande-frase">Dá para discordar da decisão do STF. Não dá para usar isso para dizer que a eleição foi roubada.</div>
+    <div class="lista">
+      <div>Os números estão aí: o horário extra não mudou nenhum resultado.</div>
+      <div>Os arquivos das urnas são públicos. Eu baixei, você também pode.</div>
+      <div>Quem diz que houve fraude precisa mostrar onde. "Eu acho" não é prova.</div>
+    </div>
+    <p style="margin-top:56px; color:var(--text); font-weight:600; font-size:44px">Democracia é aceitar o resultado, mesmo quando a gente perde.</p>
+  </div>
+  <div class="rodape"><span>@flaviopangracio</span><span class="pontos"><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i></span></div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="rot">Confira você mesmo</div>
+  <h2>Fiz um mapa com cada escola onde alguém votou depois das 17h.</h2>
+  <img class="mapa" src="mapa.png" alt="">
+  <p>O site e o código estão abertos. Link na bio.</p>
+  <p class="link" style="margin-top:20px">flaviohugo14.github.io/logsdasurnas</p>
+  <div class="rodape"><span>@flaviopangracio</span><span class="pontos"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i></span></div>
+</section>
+
+</body>
+</html>
