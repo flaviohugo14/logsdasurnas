@@ -1,0 +1,8 @@
+# Dados brutos: grandes demais para o git, e qualquer um baixa de novo com os scripts
+logs_urnas/
+dados_tse/
+resultados/
+*.part
+
+__pycache__/
+.DS_Store
